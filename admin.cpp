@@ -37,5 +37,4 @@ void admin () {
     cout << "Pendaftaran Nasabah Baru";
     cin.get(); 
     signup();
-    return 0;
 }
