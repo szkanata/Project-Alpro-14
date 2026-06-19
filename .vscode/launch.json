@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": ".",
-      "program": "build/Debug/outDebug",
+      "cwd": "d:/Project Alpro/Project-Alpro-14/Project-Alpro-14/output",
+      "program": "d:/Project Alpro/Project-Alpro-14/Project-Alpro-14/output/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
