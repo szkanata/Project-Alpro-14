@@ -53,6 +53,9 @@ struct akun {
     akun* next;
     pengguna data;
 };
+akun* carinasabahByUsk(string usn);
+akun* carinasabahByRek(long long rek);
+bool apakahUserSudahAda(string usn, long long rek);
 
 akun* head = nullptr;
 akun* currentuser = nullptr;
@@ -89,6 +92,36 @@ long long rekeninggenerator() {
         newrek = (newrek * 10) + digit; 
     }
     return newrek;
+}
+akun* carinasabahByUsk(string usn) {
+    akun* temp = head;
+    while (temp != nullptr) {
+        if (temp->data.username == usn) {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return nullptr; 
+}
+akun* carinasabahByRek(long long rek) {
+    akun* temp = head;
+    while (temp != nullptr) {
+        if (temp->data.norek == rek) {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return nullptr;
+}
+bool apakahUserSudahAda(string usn, long long rek) {
+    if (carinasabahByUsk(usn) != nullptr) {
+        cout << ALERT_RED << "\n[Error] Username '" << usn << "' sudah digunakan nasabah lain!" << RESET << endl;
+        return true;
+    }
+    if (carinasabahByRek(rek) != nullptr) {
+        return true; 
+    }
+    return false;
 }
 
 void pendaftarannasabah() {
