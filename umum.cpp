@@ -164,7 +164,7 @@ void pendaftarannasabah() {
     akun* newakun = new akun;
     cout << BLUE_PURE << "=== PENDAFTARAN NASABAH BARU ===" << RESET << endl;
     
-    cin.ignore(9999, '\n'); 
+    cin.ignore(9999, '\n');
     cout << "Masukkan Nama Nasabah : "; getline(cin, newakun->data.nama);
     cout << "Masukkan PIN          : "; cin >> newakun->data.pin;
     
