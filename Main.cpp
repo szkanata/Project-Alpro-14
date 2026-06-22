@@ -93,7 +93,7 @@ void bersihkanLayar() {
 }
 
 void tungguEnter() {
-    cout << "\n" << pusat_layar << SUB_GRAY << "Tekan ENTER untuk melanjutkan..." << RESET;
+    cout << "\n" << pusat_layar << SUB_GRAY << "     Tekan ENTER untuk melanjutkan..." << RESET;
     while (_getch() != '\r'); 
 }
 
@@ -341,7 +341,6 @@ void pendaftarannasabah() {
     catatLogTransaksi(&(newakun->data), "MASUK", "Setoran Saldo Pembuatan Akun", newakun->data.saldo);
     cout << pusat_layar << SUCCESS_GRN << "Pendaftaran Berhasil! No Rek: " << newakun->data.norek << "\n" << RESET;
     totalnasabah++;
-    cout << pusat_layar << SUB_GRAY << "Tekan ENTER Untuk Melanjutkan..." << endl;
     tungguEnter();
 }
 
@@ -399,7 +398,6 @@ void lihatdatanasabah() {
     int spasiTotal = (LEBAR_KOTAK - totalText.length()) / 2;
     cout << pusat_layar << string(spasiTotal, ' ') << totalText << endl;
     cout << pusat_layar << BLUE_PURE << "--------------------------------------\n" << RESET;
-    cout << pusat_layar << SUB_GRAY << "Tekan ENTER Untuk Melanjutkan..." << endl;
     tungguEnter();
 }
 
@@ -417,6 +415,13 @@ void kelolaakunnasabah() {
 
     long long cariRek;
     cout << pusat_layar << "Masukkan No Rekening : "; cin >> cariRek;
+        if (cin.fail()) {
+        cin.clear();
+        cin.ignore(9999, '\n');
+
+        cout << "\n" << pusat_layar << ALERT_RED << "Input harus berupa angka!"  << RESET << endl;
+        return;
+        }
 
     akun* temp = head;
     akun* prev = nullptr;
@@ -512,7 +517,7 @@ void setortunai() {
         cout << pusat_layar << ALERT_RED << "[GAGAL] Setoran harus kelipatan Rp 50.000!\n" << RESET;
     } else {
         if (!verifikasiPinTransaksi(currentuser->data.pin)) {
-            cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+            cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
             return;
         }
         currentuser->data.saldo += nominal;
@@ -520,7 +525,7 @@ void setortunai() {
         cout << pusat_layar << SUCCESS_GRN << "[SUKSES] Uang berhasil disetor.\n" << RESET;
         cout << pusat_layar << TEXT_BLACK << "Saldo Terbaru  : Rp " << currentuser->data.saldo << RESET << "\n";
     }
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
 }
 
 void riwayattransaksi() { 
@@ -528,7 +533,7 @@ void riwayattransaksi() {
     pengguna* ptrUser = &(currentuser->data);
 
     cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "          MUTASI REKENING NASABAH      \n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "       MUTASI REKENING NASABAH      \n" << RESET;
     cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
     cout << pusat_layar << TEXT_BLACK << "No Rekening : " << RESET << ptrUser->norek << "\n";
     cout << pusat_layar << TEXT_BLACK << "Nama        : " << RESET << ptrUser->nama << "\n";
@@ -550,21 +555,26 @@ void riwayattransaksi() {
 
 void riwayattransaksinasabah() { 
     long long rekTarget;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "      [ADMIN] MONITORING LOG NASABAH   \n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
-    cout << pusat_layar << CYAN_LAUT << "Masukkan Nomor Rekening Target: " << RESET; cin >> rekTarget;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << BLUE_PURE << "\t\t\t\t\t\t\t    =======================================\n" << RESET;
+    cout << BLUE_PURE << "\t\t\t\t\t\t\t         [ADMIN] MONITORING LOG NASABAH  \n" << RESET;
+    cout << BLUE_PURE << "\t\t\t\t\t\t\t    =======================================\n" << RESET;
+    while (true) {
+    cout << CYAN_LAUT << "\t\t\t\t\t\t\t    Masukkan Nomor Rekening Target: " << RESET; cin >> rekTarget;
+    if (!cin.fail()) break;
+    cin.clear(); cin.ignore(9999, '\n');
+    cout << ALERT_RED << "\t\t\t\t\t\t\t    [GAGAL] Input harus berupa angka!\n" << RESET;
+    }
+    cout << BLUE_PURE << "\t\t\t\t\t\t\t    =======================================\n" << RESET;
 
     akun* temp = carinasabahByRek(rekTarget);
     if (temp != nullptr) {
-        cout << pusat_layar << SUCCESS_GRN << "[DATA KETEMU] Mengalihkan ke riwayat...\n" << RESET;
+        cout << SUCCESS_GRN << "\t\t\t\t\t\t\t    [DATA KETEMU] Mengalihkan ke riwayat...\n" << RESET;
         tungguEnter();
         bersihkanLayar();
         headmenuutama();
         
         cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
-        cout << pusat_layar << BLUE_PURE << "       [ADMIN MODE] DETAIL MUTASI       \n" << RESET;
+        cout << pusat_layar << BLUE_PURE << "     [ADMIN MODE] DETAIL MUTASI       \n" << RESET;
         cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
         cout << pusat_layar << TEXT_BLACK << "No Rekening : " << RESET << temp->data.norek << "\n";
         cout << pusat_layar << TEXT_BLACK << "Nama Nasabah: " << RESET << temp->data.nama << "\n";
@@ -579,10 +589,11 @@ void riwayattransaksinasabah() {
                 cout << pusat_layar << SUB_GRAY << "   ----------------------------------\n" << RESET;
             }
         }
-        cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+        cout << pusat_layar << BLUE_PURE << "=======================================\n" << RESET;
     } else {
-        cout << pusat_layar << ALERT_RED << "[GAGAL] Nomor rekening tidak terdaftar!\n" << RESET;
-        cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+        cout << pusat_layar << ALERT_RED << "     [GAGAL] Nomor rekening tidak terdaftar!\n" << RESET;
+        cout << pusat_layar << BLUE_PURE << "     =======================================\n" << RESET;
+        tungguEnter();
     }
 }
 
@@ -607,7 +618,7 @@ void tariktunai(pengguna* ptrUser) {
     } else {
         
         if (!verifikasiPinTransaksi(ptrUser->pin)) {
-            cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+            cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
             tungguEnter();
             return;
         }
@@ -616,7 +627,7 @@ void tariktunai(pengguna* ptrUser) {
         cout << pusat_layar << SUCCESS_GRN << "[SUKSES] Silakan ambil uang Anda.\n" << RESET;
         cout << pusat_layar << TEXT_BLACK << "Sisa Saldo     : Rp " << ptrUser->saldo << RESET << "\n";
     }
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
     tungguEnter();
 }
 
@@ -624,41 +635,48 @@ void transfersaldo() {
     if (currentuser == nullptr) return;
 
     long long rekTujuan, nominal;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "              TRANSFER SALDO            \n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "=========================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "              TRANSFER SALDO             \n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "=========================================\n" << RESET;
 
-    cout << pusat_layar << CYAN_LAUT << "Nomor Rekening Tujuan : " << RESET; cin >> rekTujuan;
+    cout << pusat_layar << CYAN_LAUT << "  Nomor Rekening Tujuan : " << RESET; cin >> rekTujuan;
+        while (cin.fail()) {
+            cin.clear();
+            cin.ignore(9999, '\n');
+
+            cout << pusat_layar << ALERT_RED << "  Input harus berupa angka!" << RESET << endl;
+            return;
+        }
 
     if (rekTujuan == currentuser->data.norek) {
-        cout << pusat_layar << ALERT_RED << "\nTidak bisa transfer ke rekening sendiri!\n" << RESET;
+        cout << pusat_layar << ALERT_RED << " Tidak bisa transfer ke rekening sendiri!" << RESET;
         return;
     }
 
     akun* penerima = carinasabahByRek(rekTujuan);
     if (penerima == nullptr) {
-        cout << pusat_layar << ALERT_RED << "\nNomor rekening tidak ditemukan!\n" << RESET;
+        cout << pusat_layar << ALERT_RED << "  Nomor rekening tidak ditemukan!" << RESET;
         return;
     }
 
     if (penerima->data.isblokir) {
-        cout << pusat_layar << ALERT_RED << "\nTransfer gagal! Rekening tujuan sedang diblokir.\n" << RESET;
+        cout << pusat_layar << ALERT_RED << "  Transfer gagal! Rekening tujuan sedang diblokir." << RESET;
         return;
     }
 
-    cout << pusat_layar << CYAN_LAUT << "Nama Penerima         : " << RESET << penerima->data.nama << "\n";
-    cout << pusat_layar << CYAN_LAUT << "Nominal Transfer      : " << RESET << "Rp "; cin >> nominal;
+    cout << pusat_layar << CYAN_LAUT << "  Nama Penerima         : " << RESET << penerima->data.nama << "\n";
+    cout << pusat_layar << CYAN_LAUT << "  Nominal Transfer      : " << RESET << "Rp "; cin >> nominal;
 
     if (nominal <= 0 || nominal < 10000 || nominal > currentuser->data.saldo) {
         cout << pusat_layar << ALERT_RED << "Nominal tidak valid atau saldo kurang (Min. Rp 10.000)!\n" << RESET;
         return;
     }
 
-    cout << "\n" << pusat_layar << SUCCESS_GRN << "============= KONFIRMASI =============\n" << RESET;
-    cout << pusat_layar << "Pengirim : " << currentuser->data.nama << "\n";
-    cout << pusat_layar << "Penerima : " << penerima->data.nama << "\n";
-    cout << pusat_layar << "Rekening : " << penerima->data.norek << "\n";
-    cout << pusat_layar << "Nominal  : Rp " << nominal << "\n";
+    cout << "\n" << pusat_layar << SUCCESS_GRN << "=============== KONFIRMASI ===============\n" << RESET;
+    cout << pusat_layar << "  Pengirim : " << currentuser->data.nama << "\n";
+    cout << pusat_layar << "  Penerima : " << penerima->data.nama << "\n";
+    cout << pusat_layar << "  Rekening : " << penerima->data.norek << "\n";
+    cout << pusat_layar << "  Nominal  : Rp " << nominal << "\n";
 
     char konfirmasi = ambilKonfirmasiValid("Lanjutkan transfer? (Y/N) : ", 'Y', 'N');
     if (konfirmasi != 'y') {
@@ -704,13 +722,13 @@ void loginAsAdmin() {
 void loginAsUser() {
     bersihkanLayar();
     string usn, pass;
-    cout << pusat_layar << BLUE_PURE << "======================================" << RESET << "\n";
-    cout << pusat_layar << BLUE_PURE << "      PORTAL OTENTIKASI NASABAH      " << RESET << "\n";
-    cout << pusat_layar << BLUE_PURE << "======================================" << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "==================================================" << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "             PORTAL OTENTIKASI NASABAH            " << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "==================================================" << RESET << "\n";
     cout << pusat_layar << CYAN_LAUT << "Username Akun : " << RESET; cin >> usn;
     cout << pusat_layar << CYAN_LAUT << "Password Akun : " << RESET; pass = inputPasswordSensor();
-    cout << pusat_layar << BLUE_PURE << "======================================" << RESET << "\n";
-    
+    cout << pusat_layar << BLUE_PURE << "==================================================" << RESET << "\n";
+
     akun* temp = carinasabahByUsk(usn);
     if (temp != nullptr && temp->data.password == pass) {
         if (temp->data.isblokir) {
@@ -767,7 +785,7 @@ void subMenuAdmin(int idx) {
             if (kursor == 1) pendaftarannasabah(); 
             else if (kursor == 2) { lihatdatanasabah(); }
             else if (kursor == 3) { kelolaakunnasabah(); tungguEnter(); }
-            else if (kursor == 4) { riwayattransaksinasabah(); tungguEnter(); }
+            else if (kursor == 4) { riwayattransaksinasabah(); }
             else if (kursor == 5) break;
         }
     }
@@ -870,16 +888,16 @@ void menuUtama() {
     while (true) {
         bersihkanLayar();
         headmenuutama();
-		cout << "\t\t\t\t\t\t\t       ==============================" << endl;
-        if (kursor == 1) cout << "\t\t\t\t\t\t\t       |  " << SUCCESS_GRN << "> Login Sebagai Nasabah <" << RESET << " |\n";
-        else cout << "\t\t\t\t\t\t\t       |    Login Sebagai Nasabah   |\n";
+		cout << "\t\t\t\t\t\t\t       ===============================" << endl;
+        if (kursor == 1) cout << "\t\t\t\t\t\t\t       |  " << SUCCESS_GRN << "> Login Sebagai Nasabah < " << RESET << " |\n";
+        else cout << "\t\t\t\t\t\t\t       |    Login Sebagai Nasabah    |\n";
 
-        if (kursor == 2) cout << "\t\t\t\t\t\t\t       |  " << SUCCESS_GRN << ">  Login Sebagai Admin  <" << RESET << " |\n";
-        else cout << "\t\t\t\t\t\t\t       |    Login Sebagai Admin     |\n";
+        if (kursor == 2) cout << "\t\t\t\t\t\t\t       |  " << SUCCESS_GRN << ">  Login Sebagai Admin  < " << RESET << " |\n";
+        else cout << "\t\t\t\t\t\t\t       |     Login Sebagai Admin     |\n";
 
-        if (kursor == 3) cout << "\t\t\t\t\t\t\t       |  " << ALERT_RED << ">    Keluar Aplikasi    <" << RESET << " |\n";
-        else cout << "\t\t\t\t\t\t\t       |      Keluar Aplikasi       |\n";
-        cout << "\t\t\t\t\t\t\t       ==============================" << endl;
+        if (kursor == 3) cout << "\t\t\t\t\t\t\t       |  " << ALERT_RED << " >   Keluar Aplikasi   < " << RESET << "  |\n";
+        else cout << "\t\t\t\t\t\t\t       |       Keluar Aplikasi       |\n";
+        cout << "\t\t\t\t\t\t\t       ===============================" << endl;
             
         cout << BLUE_PURE << "==================================================================================================================================================" << RESET << "\n";
         cout << SUB_GRAY << "Navigasi: Panah Atas/Bawah | Enter untuk memilih" << RESET << "\n";
@@ -895,7 +913,7 @@ void menuUtama() {
             else if (kursor == 2) loginAsAdmin();
             else if (kursor == 3) {
                 bersihkanLayar();
-                cout << SUCCESS_GRN << "[TERMINATED] Sesi mini bank ditutup. Terima kasih." << RESET << "\n\n";
+                cout << pusat_layar << SUCCESS_GRN << "[TERMINATED] Sesi mini bank ditutup. Terima kasih." << RESET << "\n\n";
                 break;
             }
         }
