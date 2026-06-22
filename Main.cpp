@@ -93,7 +93,7 @@ void bersihkanLayar() {
 }
 
 void tungguEnter() {
-    cout << "\n\n" << SUB_GRAY << "Tekan ENTER untuk melanjutkan..." << RESET;
+    cout << "\n" << pusat_layar << SUB_GRAY << "Tekan ENTER untuk melanjutkan..." << RESET;
     while (_getch() != '\r'); 
 }
 
@@ -133,18 +133,18 @@ bool verifikasiPinTransaksi(int pinAsli) {
     string inputStr;
     
     while (true) {
-        cout << CYAN_LAUT << "Masukkan 6-Digit PIN Anda : " << RESET;
+        cout << pusat_layar << CYAN_LAUT << "Masukkan 6-Digit PIN Anda : " << RESET;
         inputStr = inputPinTranskasiSensor();
         
         // 1. Validasi jika nasabah langsung menekan Enter (string kosong)
         if (inputStr.empty()) {
-            cout << ALERT_RED << "[Error] PIN tidak boleh kosong!\n" << RESET << endl;
+            cout << pusat_layar << ALERT_RED << "[Error] PIN tidak boleh kosong!\n" << RESET << endl;
             continue; // Ulangi loop untuk meminta input lagi
         }
         
         // 2. Validasi panjang harus tepat 6 digit
         if (inputStr.length() != 6) {
-            cout << ALERT_RED << "[Error] PIN harus tepat 6 digit!\n" << RESET << endl;
+            cout << pusat_layar << ALERT_RED << "[Error] PIN harus tepat 6 digit!\n" << RESET << endl;
             continue; // Ulangi loop
         }
         
@@ -158,7 +158,7 @@ bool verifikasiPinTransaksi(int pinAsli) {
         }
         
         if (!semuaAngka) {
-            cout << ALERT_RED << "[Error] PIN harus berupa angka!\n" << RESET << endl;
+            cout << pusat_layar << ALERT_RED << "[Error] PIN harus berupa angka!\n" << RESET << endl;
             continue; // Ulangi loop
         }
         
@@ -170,7 +170,7 @@ bool verifikasiPinTransaksi(int pinAsli) {
 
     // Cocokkan dengan PIN asli milik nasabah
     if (inputPin != pinAsli) {
-        cout << ALERT_RED << "\n[GAGAL] PIN yang Anda masukkan salah!" << RESET << endl;
+        cout << "\n"<< pusat_layar << ALERT_RED << "[GAGAL] PIN yang Anda masukkan salah!" << RESET << endl;
         return false;
     }
     
@@ -181,12 +181,11 @@ bool verifikasiPinTransaksi(int pinAsli) {
 char ambilKonfirmasiValid(string pesanPrompt, char opsiBenar, char opsiSalah) {
     char pilihan;
     while (true) {
-        cout << pesanPrompt;
-        cin >> pilihan;
+        cout << pusat_layar << pesanPrompt; cin >> pilihan;
         
         // Cek jika input gagal (misal memasukkan banyak karakter)
         if (cin.fail() || cin.peek() != '\n') {
-            cout << ALERT_RED << "[Error] Input tidak valid! Masukkan hanya 1 karakter.\n" << RESET;
+            cout << pusat_layar << ALERT_RED << "[Error] Input tidak valid! Masukkan hanya 1 karakter.\n" << RESET;
             cin.clear();
             cin.ignore(9999, '\n');
             continue;
@@ -200,7 +199,7 @@ char ambilKonfirmasiValid(string pesanPrompt, char opsiBenar, char opsiSalah) {
         if (pilihan == opsi1 || pilihan == opsi2) {
             return pilihan; // Mengembalikan input yang sudah divalidasi
         } else {
-            cout << ALERT_RED << "[Error] Pilihan salah! Harap masukkan (" << (char)toupper(opsiBenar) << "/" << (char)toupper(opsiSalah) << ").\n" << RESET;
+            cout << pusat_layar << ALERT_RED << "[Error] Pilihan salah! Harap masukkan (" << (char)toupper(opsiBenar) << "/" << (char)toupper(opsiSalah) << ").\n" << RESET;
         }
     }
 }
@@ -267,7 +266,7 @@ void pendaftarannasabah() {
     cout << pusat_layar << BLUE_PURE << "     === PENDAFTARAN NASABAH BARU ===\n" << RESET;
     cout << pusat_layar << "==========================================\n";
     cout << pusat_layar << "Masukkan Nama Nasabah : "; // Membersihkan buffer sebelum getline
-    getline(cin, newakun->data.nama); 
+    getline(cin >> ws, newakun->data.nama); 
     
     while (true) {
 	    cout << pusat_layar << "Masukkan PIN (6 Digit): "; 
@@ -343,7 +342,7 @@ void pendaftarannasabah() {
     cout << pusat_layar << SUCCESS_GRN << "Pendaftaran Berhasil! No Rek: " << newakun->data.norek << "\n" << RESET;
     totalnasabah++;
     cout << pusat_layar << SUB_GRAY << "Tekan ENTER Untuk Melanjutkan..." << endl;
-    cin.get();
+    tungguEnter();
 }
 
 void lihatdatanasabah() {
@@ -400,8 +399,8 @@ void lihatdatanasabah() {
     int spasiTotal = (LEBAR_KOTAK - totalText.length()) / 2;
     cout << pusat_layar << string(spasiTotal, ' ') << totalText << endl;
     cout << pusat_layar << BLUE_PURE << "--------------------------------------\n" << RESET;
-    cout << pusat_layar << "Tekan ENTER Untuk Melanjutkan" << endl;
-    cin.get();
+    cout << pusat_layar << SUB_GRAY << "Tekan ENTER Untuk Melanjutkan..." << endl;
+    tungguEnter();
 }
 
 void kelolaakunnasabah() {
@@ -453,7 +452,7 @@ void kelolaakunnasabah() {
 
             switch (pilih) {
             case 1:
-                konfirmasi = ambilKonfirmasiValid(pusat_layar + "Yakin memblokir akun ini? (Y/N) : ", 'Y', 'N');
+                konfirmasi = ambilKonfirmasiValid("Yakin memblokir akun ini? (Y/N) : ", 'Y', 'N');
                 if (konfirmasi == 'y') {
                     if (temp->data.isblokir) cout << pusat_layar << ALERT_RED << "Akun memang sudah diblokir.\n" << RESET;
                     else { temp->data.isblokir = true; cout << pusat_layar << SUCCESS_GRN << "Akun berhasil diblokir.\n" << RESET; }
@@ -461,7 +460,7 @@ void kelolaakunnasabah() {
                 break;
 
             case 2:
-                konfirmasi = ambilKonfirmasiValid(pusat_layar + "Yakin membuka blokir akun ini? (Y/N) : ", 'Y', 'N');
+                konfirmasi = ambilKonfirmasiValid("Yakin membuka blokir akun ini? (Y/N) : ", 'Y', 'N');
                 if (konfirmasi == 'y') {
                     if (!temp->data.isblokir) cout << pusat_layar << ALERT_RED << "Akun sudah aktif.\n" << RESET;
                     else { temp->data.isblokir = false; cout << pusat_layar << SUCCESS_GRN << "Akun berhasil diaktifkan.\n" << RESET; }
@@ -469,7 +468,7 @@ void kelolaakunnasabah() {
                 break;
 
             case 3:
-                konfirmasi = ambilKonfirmasiValid(pusat_layar + "Yakin ingin menghapus akun ini? (Y/N) : ", 'Y', 'N');
+                konfirmasi = ambilKonfirmasiValid("Yakin ingin menghapus akun ini? (Y/N) : ", 'Y', 'N');
                 if (konfirmasi == 'y') {
                     if (temp == head) head = head->next;
                     else prev->next = temp->next;
@@ -497,14 +496,14 @@ void setortunai() {
     if (currentuser == nullptr) return;
 
     long long nominal;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "        FASILITAS SETOR TUNAI         \n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "           FASILITAS SETOR TUNAI          \n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
                 
-    cout << pusat_layar << CYAN_LAUT << "Saldo Saat Ini : " << RESET << TEXT_BLACK << "Rp " << currentuser->data.saldo << RESET << "\n";
-    cout << pusat_layar << CYAN_LAUT << "Nominal Setor  : " << RESET << TEXT_BLACK << "Rp " << RESET; cin >> nominal;
+    cout << pusat_layar << CYAN_LAUT << "  Saldo Saat Ini : " << RESET << TEXT_BLACK << "Rp " << currentuser->data.saldo << RESET << "\n";
+    cout << pusat_layar << CYAN_LAUT << "  Nominal Setor  : " << RESET << TEXT_BLACK << "Rp " << RESET; cin >> nominal;
                 
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
 
     if (cin.fail() || nominal <= 0) {
         cin.clear(); cin.ignore(9999, '\n');
@@ -512,7 +511,6 @@ void setortunai() {
     } else if (nominal % 50000 != 0) {
         cout << pusat_layar << ALERT_RED << "[GAGAL] Setoran harus kelipatan Rp 50.000!\n" << RESET;
     } else {
-        cout << pusat_layar;
         if (!verifikasiPinTransaksi(currentuser->data.pin)) {
             cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
             return;
@@ -593,22 +591,21 @@ void tariktunai(pengguna* ptrUser) {
     headmenuutama();
     long long nominal;
                 
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "       FASILITAS PENARIKAN TUNAI       \n" << RESET;
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "         FASILITAS PENARIKAN TUNAI        \n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
                 
     cout << pusat_layar << CYAN_LAUT << "Saldo Tersedia : " << RESET << TEXT_BLACK << "Rp " << ptrUser->saldo << RESET << "\n";
     cout << pusat_layar << CYAN_LAUT << "Nominal Tarik  : " << RESET << TEXT_BLACK << "Rp " << RESET; cin >> nominal;
                 
-    cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
+    cout << pusat_layar << BLUE_PURE << "==========================================\n" << RESET;
 
-    if (nominal <<= 0 || nominal % 50000 != 0) {
+    if (nominal < 50000 || nominal % 50000 != 0) {
         cout << pusat_layar << ALERT_RED << "[GAGAL] Nominal harus kelipatan Rp 50.000!\n" << RESET;
     } else if (nominal > ptrUser->saldo) {
         cout << pusat_layar << ALERT_RED << "[GAGAL] Saldo Anda tidak mencukupi!\n" << RESET;
     } else {
         
-        cout << pusat_layar; 
         if (!verifikasiPinTransaksi(ptrUser->pin)) {
             cout << pusat_layar << BLUE_PURE << "======================================\n" << RESET;
             tungguEnter();
@@ -653,23 +650,22 @@ void transfersaldo() {
     cout << pusat_layar << CYAN_LAUT << "Nominal Transfer      : " << RESET << "Rp "; cin >> nominal;
 
     if (nominal <= 0 || nominal < 10000 || nominal > currentuser->data.saldo) {
-        cout << pusat_layar << ALERT_RED << "\nNominal tidak valid atau saldo kurang (Min. Rp 10.000)!\n" << RESET;
+        cout << pusat_layar << ALERT_RED << "Nominal tidak valid atau saldo kurang (Min. Rp 10.000)!\n" << RESET;
         return;
     }
 
-    cout << "\n" << pusat_layar << SUCCESS_GRN << "========== KONFIRMASI ==========\n" << RESET;
+    cout << "\n" << pusat_layar << SUCCESS_GRN << "============= KONFIRMASI =============\n" << RESET;
     cout << pusat_layar << "Pengirim : " << currentuser->data.nama << "\n";
     cout << pusat_layar << "Penerima : " << penerima->data.nama << "\n";
     cout << pusat_layar << "Rekening : " << penerima->data.norek << "\n";
     cout << pusat_layar << "Nominal  : Rp " << nominal << "\n";
 
-    char konfirmasi = ambilKonfirmasiValid(pusat_layar + "\nLanjutkan transfer? (Y/N) : ", 'Y', 'N');
+    char konfirmasi = ambilKonfirmasiValid("Lanjutkan transfer? (Y/N) : ", 'Y', 'N');
     if (konfirmasi != 'y') {
         cout << pusat_layar << ALERT_RED << "\nTransfer dibatalkan.\n" << RESET;
         return;
     }
     
-    cout << pusat_layar;
     if (!verifikasiPinTransaksi(currentuser->data.pin)) return;
 
     currentuser->data.saldo -= nominal;
@@ -686,49 +682,49 @@ void transfersaldo() {
 void loginAsAdmin() {
     bersihkanLayar(); 
     string usn, pass;
-    cout << BLUE_PURE << "======================================" << RESET << "\n";
-    cout << BLUE_PURE << "    SECURITY ACCESS: VERIFIKASI ADMIN  " << RESET << "\n";
-    cout << BLUE_PURE << "======================================" << RESET << "\n";
-    cout << CYAN_LAUT << "Username Akun : " << RESET; cin >> usn;
-    cout << CYAN_LAUT << "Password Akun : " << RESET; pass = inputPasswordSensor(); 
-    cout << BLUE_PURE << "======================================" << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "======================================================" << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "          SECURITY ACCESS: VERIFIKASI ADMIN       " << RESET << "\n";
+    cout << pusat_layar << "======================================================" << RESET << "\n";
+    cout << pusat_layar << CYAN_LAUT << "  Username Akun : " << RESET; cin >> usn;
+    cout << pusat_layar << CYAN_LAUT << "  Password Akun : " << RESET; pass = inputPasswordSensor(); 
+    cout << pusat_layar << "======================================================" << RESET << "\n";
 
     for (int i = 0; i < 2; i++) {
         if (dataAdmin[i].username == usn && dataAdmin[i].password == pass) {
-        	cout << SUCCESS_GRN << "[Akses Diterima] Selamat Datang " << dataAdmin[i].namaAdmin << RESET;
+        	cout << pusat_layar << SUCCESS_GRN << "[Akses Diterima] Selamat Datang " << dataAdmin[i].namaAdmin << RESET;
         	tungguEnter();
             subMenuAdmin(i);
             return;
         }
     }
-    cout << endl << ALERT_RED << "[Akses Ditolak] Kredensial Salah!" << RESET << "\n"; 
+    cout << endl << pusat_layar << ALERT_RED << "[Akses Ditolak] Kredensial Salah!" << RESET << "\n"; 
     tungguEnter();
 }
 
 void loginAsUser() {
     bersihkanLayar();
     string usn, pass;
-    cout << BLUE_PURE << "======================================" << RESET << "\n";
-    cout << BLUE_PURE << "         PORTAL OTENTIKASI NASABAH    " << RESET << "\n";
-    cout << BLUE_PURE << "======================================" << RESET << "\n";
-    cout << CYAN_LAUT << "Username Akun : " << RESET; cin >> usn;
-    cout << CYAN_LAUT << "Password Akun : " << RESET; pass = inputPasswordSensor();
-    cout << BLUE_PURE << "======================================" << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "======================================" << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "      PORTAL OTENTIKASI NASABAH      " << RESET << "\n";
+    cout << pusat_layar << BLUE_PURE << "======================================" << RESET << "\n";
+    cout << pusat_layar << CYAN_LAUT << "Username Akun : " << RESET; cin >> usn;
+    cout << pusat_layar << CYAN_LAUT << "Password Akun : " << RESET; pass = inputPasswordSensor();
+    cout << pusat_layar << BLUE_PURE << "======================================" << RESET << "\n";
     
     akun* temp = carinasabahByUsk(usn);
     if (temp != nullptr && temp->data.password == pass) {
         if (temp->data.isblokir) {
-            cout << ALERT_RED << "[STATUS BLOKIR] Akun Anda Ditangguhkan oleh Admin!" << RESET << "\n"; 
+            cout << pusat_layar << ALERT_RED << "[STATUS BLOKIR] Akun Anda Ditangguhkan oleh Admin!" << RESET << "\n"; 
             tungguEnter();
             return;
         }
         currentuser = temp;
-        cout << SUCCESS_GRN << "[BERHASIL] Selamat Datang " << currentuser->data.nama << RESET;
+        cout << pusat_layar << SUCCESS_GRN << "[BERHASIL] Selamat Datang " << currentuser->data.nama << RESET;
         tungguEnter();
         subMenuNasabah();
         return;
     }
-    cout << "\n" << ALERT_RED << "[Gagal Auth] Kombinasi Username & Password Keliru!" << RESET << "\n"; 
+    cout << "\n" << pusat_layar << ALERT_RED << "[Gagal Auth] Kombinasi Username & Password Keliru!" << RESET << "\n"; 
     tungguEnter();
 }
 
@@ -742,7 +738,7 @@ void subMenuAdmin(int idx) {
         headmenuutama();
         cout << "\t\t\t\t\t\t\t     ===" << BLUE_PURE << " KONSOL OPERATOR SUPERVISOR " << RESET << "===   " << "\n";
         cout << "==================================================================================================================================================" << RESET << "\n";
-        cout << "\t\t\t\t\t\t\t      " << SUCCESS_GRN << "Petugas Aktif: " << dataAdmin[idx].namaAdmin << RESET << "\n";
+        cout << "\t\t\t\t\t\t\t     " << SUCCESS_GRN << "Petugas Aktif: " << dataAdmin[idx].namaAdmin << RESET << "\n";
         cout << "==================================================================================================================================================" << RESET << "\n";
         cout << "\t\t\t\t\t\t\t       ==============================" << endl;
         if (kursor == 1) cout << "\t\t\t\t\t\t\t\t" << CYAN_LAUT << "> Pendaftaran Nasabah Baru <" << RESET << "\n";
@@ -787,7 +783,7 @@ void subMenuNasabah() {
         headmenuutama();
         
         // Judul header menu nasabah diselaraskan ke tengah
-        cout << "\t\t\t\t\t\t\t     ===" << BLUE_PURE << "    INTERFACES MINI BANK CLIENT   " << RESET << "===   " << "\n";
+        cout << "\t\t\t\t\t\t\t     ===" << BLUE_PURE << "   INTERFACES MINI BANK CLIENT   " << RESET << "===   " << "\n";
         cout << "==================================================================================================================================================" << RESET << "\n";
         
         // Mengambil data string informasi nasabah
@@ -817,8 +813,8 @@ void subMenuNasabah() {
         if (kursor == 3) cout << "\t\t\t\t\t\t\t\t   " << SUCCESS_GRN << " > Transfer Saldo <" << RESET << "\n";
         else             cout << "\t\t\t\t\t\t\t\t      Transfer Saldo  \n";
 
-        if (kursor == 4) cout << "\t\t\t\t\t\t\t\t  " << SUCCESS_GRN << "> Riwayat  Transaksi <" << RESET << "\n";
-        else             cout << "\t\t\t\t\t\t\t\t    Riwayat  Transaksi  \n";
+        if (kursor == 4) cout << "\t\t\t\t\t\t\t\t  " << SUCCESS_GRN << "> Riwayat Transaksi <" << RESET << "\n";
+        else             cout << "\t\t\t\t\t\t\t\t    Riwayat Transaksi  \n";
 
         if (kursor == 5) cout << "\t\t\t\t\t\t\t\t\t" << ALERT_RED << "> Logout <" << RESET << "\n";
         else             cout << "\t\t\t\t\t\t\t\t\t  Logout  \n";
@@ -879,13 +875,13 @@ void menuUtama() {
         else cout << "\t\t\t\t\t\t\t       |    Login Sebagai Nasabah   |\n";
 
         if (kursor == 2) cout << "\t\t\t\t\t\t\t       |  " << SUCCESS_GRN << ">  Login Sebagai Admin  <" << RESET << " |\n";
-        else cout << "\t\t\t\t\t\t\t       |     Login Sebagai Admin    |\n";
+        else cout << "\t\t\t\t\t\t\t       |    Login Sebagai Admin     |\n";
 
         if (kursor == 3) cout << "\t\t\t\t\t\t\t       |  " << ALERT_RED << ">    Keluar Aplikasi    <" << RESET << " |\n";
-        else cout << "\t\t\t\t\t\t\t       |       Keluar Aplikasi      |\n";
+        else cout << "\t\t\t\t\t\t\t       |      Keluar Aplikasi       |\n";
         cout << "\t\t\t\t\t\t\t       ==============================" << endl;
             
-        cout << BLUE_PURE << "==============================================================================================================================================" << RESET << "\n";
+        cout << BLUE_PURE << "==================================================================================================================================================" << RESET << "\n";
         cout << SUB_GRAY << "Navigasi: Panah Atas/Bawah | Enter untuk memilih" << RESET << "\n";
         
         tombol = _getch();
