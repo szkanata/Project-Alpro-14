@@ -16,7 +16,7 @@ const string BLUE_PURE   = "\033[34;1m";
 const string NAVY_BLUE   = "\033[38;2;5;83;250m";
 
 const int MAX_MUTASI = 30;
-const int MAX_NASABAH = 100; // Batas maksimal nasabah menggunakan array
+const int MAX_NASABAH = 100;
 string pusat_layar = string(55, ' ');
 
 void headmenuutama () {
@@ -194,10 +194,10 @@ string inputPasswordSensor() {
     char ch;
     while ((ch = _getch()) != '\r') {
         if (ch == '\b') { 
-            if (pass.length() > 0) {
-                pass.pop_back();
-                cout << "\b \b";
-            }
+//            if (pass.length() > 0) {
+//                pass.pop_back();
+//                cout << "\b \b";
+//            }
         } else {
             pass.push_back(ch);
             cout << "*";
