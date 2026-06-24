@@ -92,10 +92,6 @@ void tungguEnter() {
     while (_getch() != '\r'); 
 }
 
-void buatSpasiMenu(int jumlah) {
-    for (int i = 0; i < jumlah; i++) cout << "\n";
-}
-
 void catatLogTransaksi(pengguna* n, string tipe, string detail, long long nominal) {
     int pos = n->totalMutasi;
     if (pos < MAX_MUTASI) {
@@ -257,11 +253,13 @@ void pendaftarannasabah() {
     cout << pusat_layar << BLUE_PURE << "     === PENDAFTARAN NASABAH BARU ===\n" << RESET;
     cout << pusat_layar << "==========================================\n";
     cout << pusat_layar << "Masukkan Nama Nasabah : ";
-    getline(cin >> ws, newnasabah.nama);
-    
+	getline(cin >> ws, newnasabah.nama);
+		
+		
     while (true) {
 	    cout << pusat_layar << "Masukkan PIN (6 Digit): "; 
-	    string pinStr = inputPinTranskasiSensor();
+	    string pinStr;
+	    getline(cin, pinStr);
 	    
 	    if (pinStr.length() != 6) {
 	        cout << pusat_layar << ALERT_RED << "[Error] PIN harus tepat 6 digit!\n" << RESET;
@@ -289,9 +287,17 @@ void pendaftarannasabah() {
 	    newnasabah.pin = stoi(pinStr);
 	    break; 
 	}
-	
-    string tempUsn;
-    cout << pusat_layar << "Masukkan Username     : "; getline(cin, tempUsn);
+	string tempUsn;
+	while (true) {
+    	cout << pusat_layar << "Masukkan Username     : "; getline(cin, tempUsn);
+    	
+    	if (tempUsn.length() == 0) {
+			cout << pusat_layar << ALERT_RED << "[Error] Username tidak boleh kosong!\n" << RESET;
+			continue;
+		}
+		break;
+	}
+    
     
     long long tempRek = rekeninggenerator(); 
     while (carinasabahByRek(tempRek) != nullptr) {
@@ -311,7 +317,7 @@ void pendaftarannasabah() {
         cout << pusat_layar << "Setoran Awal (Min 50k): "; 
         cin >> inputSaldoStr;
         bool semuaAngka = true;
-        for (size_t i = 0; i < inputSaldoStr.length(); i++) {
+        for (int i = 0; i < inputSaldoStr.length(); i++) {
             if (!isdigit(inputSaldoStr[i])) {
                 semuaAngka = false;
                 break;
@@ -334,7 +340,6 @@ void pendaftarannasabah() {
             continue;
         }
         newnasabah.saldo = nominalTemp;
-        cin.ignore(9999, '\n');
         break;
     }
     cin.ignore(9999, '\n');
@@ -416,12 +421,13 @@ void kelolaakunnasabah() {
         cout << pusat_layar << "Masukkan No Rekening : "; cin >> inputRekStr;
         
         bool semuaAngka = true;
-        for (size_t i = 0; i < inputRekStr.length(); i++) {
+        for (int i = 0; i < inputRekStr.length(); i++) {
             if (!isdigit(inputRekStr[i])) {
                 semuaAngka = false;
                 break;
             }
         }
+        
 
         if (!semuaAngka) {
             cout << pusat_layar << ALERT_RED << "Input harus berupa angka murni!\n" << RESET;
@@ -529,7 +535,7 @@ void setortunai() {
         cin >> inputNominalStr;
         
         bool semuaAngka = true;
-        for (size_t i = 0; i < inputNominalStr.length(); i++) {
+        for (int i = 0; i < inputNominalStr.length(); i++) {
             if (!isdigit(inputNominalStr[i])) { 
                 semuaAngka = false; 
                 break; 
@@ -564,7 +570,9 @@ void setortunai() {
         return;
     }
     
+    
     currentuser->saldo += nominal;
+    
     catatLogTransaksi(currentuser, "MASUK", "Setor Tunai Mandiri", nominal);
     cout << pusat_layar << SUCCESS_GRN << "[SUKSES] Uang berhasil disetor.\n" << RESET;
     cout << pusat_layar << TEXT_BLACK << "Saldo Terbaru  : Rp " << currentuser->saldo << RESET << "\n";
@@ -618,7 +626,7 @@ void riwayattransaksinasabah() {
 		}
         
         bool semuaAngka = true;
-        for (size_t i = 0; i < inputRekStr.length(); i++) {
+        for (int i = 0; i < inputRekStr.length(); i++) {
             if (!isdigit(inputRekStr[i])) { 
                 semuaAngka = false; 
                 break; 
@@ -684,7 +692,7 @@ void tariktunai(pengguna* ptrUser) {
         cin >> inputNominalStr;
         
         bool semuaAngka = true;
-        for (size_t i = 0; i < inputNominalStr.length(); i++) {
+        for (int i = 0; i < inputNominalStr.length(); i++) {
             if (!isdigit(inputNominalStr[i])) { 
                 semuaAngka = false; 
                 break; 
@@ -743,7 +751,7 @@ void transfersaldo() {
         cin >> inputRekStr;
         
         bool semuaAngka = true;
-        for (size_t i = 0; i < inputRekStr.length(); i++) {
+        for (int i = 0; i < inputRekStr.length(); i++) {
             if (!isdigit(inputRekStr[i])) { 
                 semuaAngka = false; 
                 break; 
@@ -782,7 +790,7 @@ void transfersaldo() {
         cout << pusat_layar << CYAN_LAUT << "  Nominal Transfer      : " << RESET << "Rp "; 
         cin >> inputNominalStr;
         bool semuaAngka = true;
-        for (size_t i = 0; i < inputNominalStr.length(); i++) {
+        for (int i = 0; i < inputNominalStr.length(); i++) {
             if (!isdigit(inputNominalStr[i])) { 
                 semuaAngka = false; 
                 break; 
@@ -854,7 +862,7 @@ void loginAsAdmin() {
             return;
         }
     }
-    cout << endl << pusat_layar << ALERT_RED << "[Akses Ditolak] Kredensial Salah!" << RESET << "\n"; 
+    cout << pusat_layar << ALERT_RED << "[Akses Ditolak] Kredensial Salah!" << RESET << "\n"; 
     tungguEnter();
 }
 
@@ -922,7 +930,7 @@ void subMenuAdmin(int idx) {
             if (tombol == 72) kursor = (kursor == 1) ? totalOpsi : kursor - 1;
             else if (tombol == 80) kursor = (kursor == totalOpsi) ? 1 : kursor + 1;
         } else if (tombol == '\r') {
-            if (kursor == 1) pendaftarannasabah(); 
+            if (kursor == 1) { pendaftarannasabah(); }
             else if (kursor == 2) { lihatdatanasabah(); }
             else if (kursor == 3) { kelolaakunnasabah(); }
             else if (kursor == 4) { riwayattransaksinasabah(); }
