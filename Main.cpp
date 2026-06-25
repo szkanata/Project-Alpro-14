@@ -103,17 +103,38 @@ void catatLogTransaksi(pengguna* n, string tipe, string detail, long long nomina
 string inputPinTranskasiSensor() {
     string pinStr = "";
     char ch;
-    while ((ch = _getch()) != '\r') {
+
+    while (true) {
+        ch = _getch();
+        if (ch == '\r') { 
+            break;
+        }
+
         if (ch == '\b') { 
-            if (pinStr.length() > 0) {
-                pinStr.pop_back();
-                cout << "\b \b";
+            if (!pinStr.empty()) {
+                pinStr.pop_back(); 
+                cout << "\b \b";   
             }
-        } else if (ch >= '0' && ch <= '9') {
-            pinStr.push_back(ch);
-            cout << "*";
+        }
+        else if (ch == 0 || ch == -32 || ch == 224) {
+            char tombolKedua = _getch();
+            
+            if (tombolKedua == 83) {
+                if (!pinStr.empty()) {
+                    pinStr.pop_back();
+                    cout << "\b \b";
+                }
+            }
+            
+        }
+        else if (ch >= '0' && ch <= '9') {
+            if (pinStr.length() >= 0) {
+                pinStr.push_back(ch);
+                cout << "*";
+            }
         }
     }
+
     cout << endl;
     return pinStr;
 }
@@ -187,17 +208,35 @@ char ambilKonfirmasiValid(string pesanPrompt, char opsiBenar, char opsiSalah) {
 string inputPasswordSensor() {
     string pass = "";
     char ch;
-    while ((ch = _getch()) != '\r') {
+
+    while (true) {
+        ch = _getch();
+        if (ch == '\r') { 
+            break;
+        }
+
         if (ch == '\b') { 
-            if (pass.length() > 0) {
-                pass.pop_back();
-                cout << "\b \b";
+            if (!pass.empty()) {
+                pass.pop_back(); 
+                cout << "\b \b";   
             }
-        } else {
+        }
+        else if (ch == 0 || ch == -32 || ch == 224) {
+            char tombolKedua = _getch();
+            
+            if (tombolKedua == 83) {
+                if (!pass.empty()) {
+                    pass.pop_back();
+                    cout << "\b \b";
+                }
+            }    
+        }
+        else {
             pass.push_back(ch);
             cout << "*";
         }
     }
+
     cout << endl;
     return pass;
 }
@@ -209,7 +248,7 @@ long long rekeninggenerator() {
         newrek = (newrek * 10) + digit; 
     }
     return newrek;
-}
+} 
 
 pengguna* carinasabahByUsk(string usn) {
     for (int i = 0; i < totalnasabah; i++) {
@@ -255,7 +294,6 @@ void pendaftarannasabah() {
     cout << pusat_layar << "Masukkan Nama Nasabah : ";
 	getline(cin >> ws, newnasabah.nama);
 		
-		
     while (true) {
 	    cout << pusat_layar << "Masukkan PIN (6 Digit): "; 
 	    string pinStr;
@@ -290,11 +328,22 @@ void pendaftarannasabah() {
 	string tempUsn;
 	while (true) {
     	cout << pusat_layar << "Masukkan Username     : "; getline(cin, tempUsn);
-    	
     	if (tempUsn.length() == 0) {
 			cout << pusat_layar << ALERT_RED << "[Error] Username tidak boleh kosong!\n" << RESET;
 			continue;
 		}
+    	int spasisemua = 0;
+		for (int i = 0; i < tempUsn.length(); i++) {
+    		if (tempUsn[i] == ' ') {
+    			spasisemua++;
+			}
+		}
+		
+		if (tempUsn.length() == spasisemua) {
+			cout << pusat_layar << ALERT_RED << "[Error] Username tidak boleh kosong!\n" << RESET;
+			continue;
+		}
+    	
 		break;
 	}
     
@@ -310,7 +359,27 @@ void pendaftarannasabah() {
     }
 
     newnasabah.username = tempUsn;
-    cout << pusat_layar << "Masukkan Password     : "; cin >> newnasabah.password;
+    while (true) {
+    	string temppass;
+		cout << pusat_layar << "Masukkan Password     : "; getline(cin, temppass);
+		if (temppass.length() == 0) {
+			cout << pusat_layar << ALERT_RED << "[Error] Username tidak boleh kosong!\n" << RESET;
+			continue;
+		}
+    	int spasisemua = 0;
+		for (int i = 0; i < temppass.length(); i++) {
+    		if (tempUsn[i] == ' ') {
+    			spasisemua++;
+			}
+		}
+		
+		if (temppass.length() == spasisemua) {
+			cout << pusat_layar << ALERT_RED << "[Error] Username tidak boleh kosong!\n" << RESET;
+			continue;
+		}
+    	newnasabah.password = temppass;
+		break;
+	}
     cin.ignore(9999, '\n');
     string inputSaldoStr;
     while (true) {
@@ -830,7 +899,11 @@ void transfersaldo() {
         return;
     }
     
-    if (!verifikasiPinTransaksi(currentuser->pin)) return;
+    if (!verifikasiPinTransaksi(currentuser->pin)) {
+    	cout << pusat_layar << ALERT_RED << "\nPIN SALAH\n" << RESET;
+    	tungguEnter();
+		return;
+	} 
 
     currentuser->saldo -= nominal;
     penerima->saldo += nominal;
@@ -927,8 +1000,20 @@ void subMenuAdmin(int idx) {
         tombol = _getch();
         if (tombol == 0 || tombol == -32 || tombol == 224) {
             tombol = _getch();
-            if (tombol == 72) kursor = (kursor == 1) ? totalOpsi : kursor - 1;
-            else if (tombol == 80) kursor = (kursor == totalOpsi) ? 1 : kursor + 1;
+            if (tombol == 72) {
+            	if (kursor == 1) {
+            		kursor = totalOpsi;
+				} else {
+					kursor = kursor - 1;
+				}
+			}
+            else if (tombol == 80) {
+            	if (kursor == totalOpsi) {
+            		kursor = 1;
+				} else {
+					kursor = kursor + 1;
+				}
+			}
         } else if (tombol == '\r') {
             if (kursor == 1) { pendaftarannasabah(); }
             else if (kursor == 2) { lihatdatanasabah(); }
@@ -986,10 +1071,21 @@ void subMenuNasabah() {
         tombol = _getch();
         if (tombol == 0 || tombol == -32 || tombol == 224) {
             tombol = _getch();
-            if (tombol == 72) kursor = (kursor == 1) ? totalOpsi : kursor - 1;
-            else if (tombol == 80) kursor = (kursor == totalOpsi) ? 1 : kursor + 1;
-        } 
-        else if (tombol == '\r') {
+            if (tombol == 72) {
+            	if (kursor == 1) {
+            		kursor = totalOpsi;
+				} else {
+					kursor = kursor - 1;
+				}
+			}
+            else if (tombol == 80) {
+            	if (kursor == totalOpsi) {
+            		kursor = 1;
+				} else {
+					kursor = kursor + 1;
+				}
+			} 
+        } else if (tombol == '\r') {
             if (kursor == 1) { setortunai(); }
             else if (kursor == 2) { tariktunai(currentuser); }
             else if (kursor == 3) { bersihkanLayar(); transfersaldo(); tungguEnter(); }
